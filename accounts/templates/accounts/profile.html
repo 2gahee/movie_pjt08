@@ -4,19 +4,50 @@
   <h1>{{ person.username }}의 프로필 페이지</h1>
   <div>
     <div>
-      팔로잉 : {{ person.followings.all|length }} / 팔로워 : {{ person.followers.all|length }}
+      팔로잉 : <span id="followings-count">{{ person.followings.all|length }}</span> / 팔로워 : <span id="followers-count">{{ person.followers.all|length }}</span>
     </div>
     {% if request.user != person %}
       <div>
-        <form action="{% url 'accounts:follow' person.pk %}" method="POST">
+        <form id="follow-form" data-user-id="{{ person.pk }}">
           {% csrf_token %}
           {% if request.user in person.followers.all %}
-            <input type="submit" value="Unfollow">
+            <input type="submit" value="Unfollow" id="follow-btn">
           {% else %}
-            <input type="submit" value="Follow">
+            <input type="submit" value="Follow" id="follow-btn">
           {% endif %}
         </form>
+        
       </div>
     {% endif %}
   </div>
+  <script>
+    const formTag = document.querySelector("#follow-form")
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+    const followBtn = document.querySelector('#follow-btn')
+    if (followBtn) {
+      formTag.addEventListener('submit', function(event) {
+        event.preventDefault()
+        const userId = event.currentTarget.dataset.userId
+        axios({
+          method : 'post',
+          url: `/accounts/${userId}/follow/`,
+          headers: {'X-CSRFToken': csrftoken,},
+        })
+        .then((response) => {
+          const isFollowed = response.data.is_followed
+          
+          if (isFollowed === true) {
+            followBtn.value = 'Unfollow'
+          }
+          else {
+            followBtn.value = 'Follow'
+          }
+          const followingsTag = document.querySelector('#followings-count')
+          const followersTag = document.querySelector('#followers-count')
+          followingsTag.textContent = response.data.followings_count
+          followersTag.textContent = response.data.followers_count
+        })
+    })}
+
+  </script>
 {% endblock %}
