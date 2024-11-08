@@ -2,4 +2,63 @@
 
 {% block content %}
   <h1>Movies</h1>
+  <ul id='app'>
+    <select v-model="selectedGenre" id="genre-form" @input=movieFilter>
+      <option value="select" disabled>장르를 선택하시오</option>
+      {% comment %} {{ movies }} {% endcomment %}
+      <option v-for="selGenre in genres" :key="genre" value="genre">
+        
+        {{ selGenre.name }}
+      </option>
+    </select>
+    <div v-for="movie in filteredMovies">
+      <li> {{movie.title}} </li>
+    </div>
+  </ul>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    const { createApp, ref, onMounted } = Vue
+    const app = createApp({
+      setup() {
+        const selectedGenre = ref('')
+        const genres = ref([])
+        const movies = ref([])
+        const filteredMovies = ref([])
+
+        const getMovies = () => {
+          axios.get('/movies/filter-genre/')
+          .then(response => {
+            genres.value = response.data.genresdata
+            movies.value = response.data.moviesdata
+            filteredMovies.value = response.data.moviesdata
+          })
+          .catch(error => {
+            console.error('Error')
+          })
+        }
+
+        const movieFilter = () => {
+          if (selectedGenre.value) {
+            filteredMovies.value = movies.value.filter(movie => movie.genre === selectedGenre.value )
+          }
+          else {
+            filteredMovies.value = movies.value
+          }
+        }
+
+        onMounted(()=>{
+          getMovies()
+        })
+
+        return {
+          selectedGenre,
+          genres,
+          filteredMovies,
+          movieFilter
+        }
+      }
+    })
+    app.mount('#app')
+
+  </script>
 {% endblock %}
