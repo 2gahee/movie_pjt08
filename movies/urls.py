@@ -6,4 +6,5 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("filter-genre/", views.filter_genre, name="filter_genre"),
     path("recommended/", views.recommended, name="recommended"),
+    path('recommend/<str:city>/', views.recommend_movie_by_weather, name='recommend_movie'),
 ]

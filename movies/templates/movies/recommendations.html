@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>영화 추천</title>
+</head>
+<body>
+    <h1>{{ city }}의 날씨 상태: {{ weather_condition }}</h1>
+    <h2>추천 영화 목록</h2>
+    <hr>
+    <ul>
+        {% for movie in recommended_movies %}
+            <li>
+                <strong>제목:</strong> {{ movie.title }}<br>
+                <strong>줄거리:</strong> {{ movie.overview }}
+                <hr>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
