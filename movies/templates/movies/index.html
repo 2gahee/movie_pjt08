@@ -1,64 +1,46 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Movies</h1>
-  <ul id='app'>
-    <select v-model="selectedGenre" id="genre-form" @input=movieFilter>
-      <option value="select" disabled>장르를 선택하시오</option>
-      {% comment %} {{ movies }} {% endcomment %}
-      <option v-for="selGenre in genres" :key="genre" value="genre">
-        
-        {{ selGenre.name }}
-      </option>
-    </select>
-    <div v-for="movie in filteredMovies">
-      <li> {{movie.title}} </li>
-    </div>
-  </ul>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-  <script>
-    const { createApp, ref, onMounted } = Vue
-    const app = createApp({
-      setup() {
-        const selectedGenre = ref('')
-        const genres = ref([])
-        const movies = ref([])
-        const filteredMovies = ref([])
+  <h1>영화 목록</h1>
 
-        const getMovies = () => {
-          axios.get('/movies/filter-genre/')
+  <label for="genre-select">장르 선택:</label>
+  <select id="genre-select" name="genre-select">
+    <option value="">장르를 선택하세요</option>
+    {% for genre in genres %}
+      <option value="{{ genre.name }}">{{ genre.name }}</option>
+    {% endfor %}
+  </select>
+
+  <ul id="movie-list">
+    {% for movie in movies %}
+      <li>{{ movie.title }}</li>
+    {% endfor %}
+  </ul>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const genreSelect = document.getElementById('genre-select')
+      const movieList = document.getElementById('movie-list')
+
+      genreSelect.addEventListener('change', function() {
+        const selectedGenre = genreSelect.value
+
+        axios.get(`/movies/filter-genre/?genre=${selectedGenre}`)
           .then(response => {
-            genres.value = response.data.genresdata
-            movies.value = response.data.moviesdata
-            filteredMovies.value = response.data.moviesdata
+            const movies = response.data.movies;
+
+            movieList.innerHTML = '';
+
+            movies.forEach(movie => {
+              const listItem = document.createElement('li');
+              listItem.textContent = movie.title;
+              movieList.appendChild(listItem);
+            });
           })
           .catch(error => {
-            console.error('Error')
-          })
-        }
-
-        const movieFilter = () => {
-          if (selectedGenre.value) {
-            filteredMovies.value = movies.value.filter(movie => movie.genre === selectedGenre.value )
-          }
-          else {
-            filteredMovies.value = movies.value
-          }
-        }
-
-        onMounted(()=>{
-          getMovies()
-        })
-
-        return {
-          selectedGenre,
-          genres,
-          filteredMovies,
-          movieFilter
-        }
-      }
-    })
-    app.mount('#app')
-
+            console.error('영화 데이터를 가져오는 중 오류 발생:', error);
+          });
+      });
+    });
   </script>
 {% endblock %}
