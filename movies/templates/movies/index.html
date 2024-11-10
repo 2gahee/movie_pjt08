@@ -1,5 +1,46 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Movies</h1>
+  <h1>영화 목록</h1>
+
+  <label for="genre-select">장르 선택:</label>
+  <select id="genre-select" name="genre-select">
+    <option value="">장르를 선택하세요</option>
+    {% for genre in genres %}
+      <option value="{{ genre.name }}">{{ genre.name }}</option>
+    {% endfor %}
+  </select>
+
+  <ul id="movie-list">
+    {% for movie in movies %}
+      <li>{{ movie.title }}</li>
+    {% endfor %}
+  </ul>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const genreSelect = document.getElementById('genre-select')
+      const movieList = document.getElementById('movie-list')
+
+      genreSelect.addEventListener('change', function() {
+        const selectedGenre = genreSelect.value
+
+        axios.get(`/movies/filter-genre/?genre=${selectedGenre}`)
+          .then(response => {
+            const movies = response.data.movies;
+
+            movieList.innerHTML = '';
+
+            movies.forEach(movie => {
+              const listItem = document.createElement('li');
+              listItem.textContent = movie.title;
+              movieList.appendChild(listItem);
+            });
+          })
+          .catch(error => {
+            console.error('영화 데이터를 가져오는 중 오류 발생:', error);
+          });
+      });
+    });
+  </script>
 {% endblock %}
