@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Recommended</h1>
+  <h3>위치하신 지역의 날씨를 기반으로 영화를 추천해드립니다</h3>
+  <ul style="font-size:150%; line-height:200%">
+    <li><a href="{% url 'movies:recommend_movie' 'Seoul' %}">서울</a></li>
+    <li><a href="{% url 'movies:recommend_movie' 'Busan' %}">부산</a></li>
+    <li><a href="{% url 'movies:recommend_movie' 'Incheon' %}">인천</a></li>
+    <li><a href="{% url 'movies:recommend_movie' 'Daegu' %}">대구</a></li>
+    <li><a href="{% url 'movies:recommend_movie' 'Daejeon' %}">대전</a></li>
+    <li><a href="{% url 'movies:recommend_movie' 'Gwangju' %}">광주</a></li>
+    <li><a href="{% url 'movies:recommend_movie' 'Ulsan' %}">울산</a></li>
+    <li><a href="{% url 'movies:recommend_movie' 'Jeju' %}">제주</a></li>
+  </ul>
+{% endblock %}

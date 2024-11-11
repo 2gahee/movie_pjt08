@@ -28,21 +28,10 @@ def filter_genre(request):
     movies_data = [{'title': movie.title} for movie in movies]
     return JsonResponse({'movies': movies_data})
 
+
 @require_safe
-def recommended(request):
-    pass
-
-
-
-# from .config import weather_genre_map
-
-# def recommend_movie_by_weather(city):
-#     # 날씨 상태 가져오기 (가정)
-#     weather_condition = "Clear"  # 예시 데이터
-
-#     # 날씨에 맞는 장르 pk 가져오기
-#     genre_pk = weather_genre_map.get(weather_condition, 12)  # 기본값: 모험 (pk=12)
-#     # 나머지 로직...
+def recommend(request):
+    return render(request, 'movies/recommend.html')
 
 def get_weather(city):
     # OpenWeatherMap API에서 날씨 정보를 가져오는 함수
